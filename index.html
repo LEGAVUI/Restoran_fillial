@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Filial | Ресторан в Махачкале</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* (стили остаются без изменений, только фон и цвета сохранены) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0b0a0c;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #ece8e0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .cursor-glow {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(199, 162, 82, 0.12) 0%, rgba(199, 162, 82, 0) 70%);
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: transform 0.08s linear;
+            will-change: transform;
+        }
+
+        .blob {
+            position: fixed;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(199, 162, 82, 0.08) 0%, rgba(20, 20, 30, 0) 80%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -2;
+            animation: floatBlob 25s infinite alternate ease-in-out;
+        }
+
+        .blob-1 { top: -20vh; left: -10vw; animation-duration: 30s; }
+        .blob-2 { bottom: -15vh; right: -5vw; width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(210, 180, 110, 0.06) 0%, rgba(0,0,0,0) 80%); animation-duration: 35s; animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 60%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(180, 130, 70, 0.05) 0%, transparent 70%); animation-duration: 28s; animation-delay: -12s; }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(7%, 12%) scale(1.2); }
+        }
+
+        .section {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 1s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .section.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(14px);
+            background: rgba(10, 8, 12, 0.65);
+            border-bottom: 1px solid rgba(199, 162, 82, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #e9d6b0, #c7a252);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #f2ede5;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: 0.3s;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #c7a252;
+            transition: 0.3s ease;
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .reserve-btn {
+            background: transparent;
+            border: 1.5px solid #c7a252;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            color: #c7a252;
+            font-weight: 600;
+            transition: 0.3s;
+            cursor: pointer;
+            background: rgba(199, 162, 82, 0.05);
+        }
+
+        .reserve-btn:hover {
+            background: #c7a252;
+            color: #0b0a0c;
+            box-shadow: 0 0 18px rgba(199, 162, 82, 0.4);
+            transform: scale(1.02);
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.8rem;
+            color: #c7a252;
+            cursor: pointer;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 0 5%;
+            background: radial-gradient(ellipse at 30% 40%, rgba(20, 18, 24, 0.7), #030203);
+        }
+
+        .hero-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 5.8rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+            background: linear-gradient(135deg, #fff6e5, #d9b56a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .gold-text {
+            color: #c7a252;
+            letter-spacing: 2px;
+        }
+
+        .hero-sub {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.85;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: #c7a252;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-weight: 700;
+            border-radius: 50px;
+            color: #0a080c;
+            transition: 0.25s;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 8px 20px rgba(199, 162, 82, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #e0bc74;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(199, 162, 82, 0.35);
+        }
+
+        .btn-outline-light {
+            background: transparent;
+            border: 1.5px solid rgba(199, 162, 82, 0.7);
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            color: #ece8e0;
+            font-weight: 600;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-outline-light:hover {
+            background: rgba(199, 162, 82, 0.15);
+            border-color: #c7a252;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            letter-spacing: -0.02em;
+        }
+        .section-title span {
+            color: #c7a252;
+            border-bottom: 2px solid #c7a252;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: #dbd5ca;
+        }
+        .about-img {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 40px -15px rgba(0,0,0,0.6);
+        }
+        .about-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.7s ease;
+        }
+        .about-img:hover img {
+            transform: scale(1.02);
+        }
+
+        .menu-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        .filter-btn {
+            background: rgba(255,255,240,0.05);
+            border: 1px solid rgba(199, 162, 82, 0.4);
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #ddd6cc;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: #c7a252;
+            color: #0b0a0c;
+            border-color: #c7a252;
+            box-shadow: 0 6px 14px rgba(199,162,82,0.25);
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2rem;
+        }
+        .menu-card {
+            background: rgba(20, 18, 24, 0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid rgba(199, 162, 82, 0.2);
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
+        }
+        .menu-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(199, 162, 82, 0.6);
+            box-shadow: 0 25px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(199,162,82,0.2);
+        }
+        .card-img {
+            height: 220px;
+            overflow: hidden;
+        }
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .menu-card:hover .card-img img {
+            transform: scale(1.06);
+        }
+        .card-info {
+            padding: 1.5rem;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.6rem;
+        }
+        .dish-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+        }
+        .price {
+            color: #c7a252;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+        .desc {
+            color: #bcb4a6;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-top: 0.5rem;
+        }
+
+        .contact-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            background: rgba(10, 8, 15, 0.6);
+            border-radius: 36px;
+            padding: 2.5rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(199, 162, 82, 0.25);
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0,0,0,0.45);
+            border: 1px solid rgba(199,162,82,0.4);
+            border-radius: 28px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #c7a252;
+            box-shadow: 0 0 10px rgba(199,162,82,0.3);
+        }
+        .submit-btn {
+            background: #c7a252;
+            border: none;
+            padding: 1rem;
+            width: 100%;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .info-item {
+            margin-bottom: 1.8rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .info-item i {
+            font-size: 1.8rem;
+            color: #c7a252;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(199,162,82,0.2);
+            margin-top: 5rem;
+            color: #b3aa9a;
+        }
+
+        @media (max-width: 992px) {
+            .about-grid, .contact-row {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background: rgba(5, 3, 8, 0.96);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: 0.4s;
+                gap: 2rem;
+                z-index: 1001;
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .menu-toggle {
+                display: block;
+                z-index: 1002;
+            }
+            .reserve-btn {
+                display: none;
+            }
+            .navbar .reserve-mobile {
+                display: block;
+                margin-top: 2rem;
+            }
+        }
+        @media (max-width: 560px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #c7a252;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 99;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .scroll-top.visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<nav class="navbar">
+    <div class="logo">FILIAL | МАХАЧКАЛА</div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="nav-link">Главная</a></li>
+        <li><a href="#about" class="nav-link">О нас</a></li>
+        <li><a href="#menu" class="nav-link">Меню</a></li>
+        <li><a href="#reservation" class="nav-link">Бронирование</a></li>
+        <li><a href="#contact" class="nav-link">Контакты</a></li>
+        <li class="reserve-mobile"><button class="reserve-btn" id="mobileReserveBtn">Забронировать</button></li>
+    </ul>
+    <button class="reserve-btn" id="desktopReserveBtn">Забронировать</button>
+    <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+</nav>
+
+<main>
+    <section id="home" class="hero section">
+        <div class="hero-content">
+            <h1>Искусство вкуса<br><span class="gold-text">в сердце Махачкалы</span></h1>
+            <p class="hero-sub">Авторская кухня, сочетающая традиции Дагестана и современную гастрономию. Каждое блюдо — симфония текстур и ароматов.</p>
+            <div class="btn-group">
+                <button class="btn-primary" id="exploreMenuBtn">Исследовать меню</button>
+                <button class="btn-outline-light" id="bookTableHero">Забронировать стол</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section container" style="margin-top: 4rem;">
+        <h2 class="section-title"><span>Наша философия</span></h2>
+        <div class="about-grid">
+            <div class="about-text">
+                <p>Ресторан «Filial» в Махачкале — это пространство, где переплетаются вековые традиции кавказского гостеприимства и ультрасовременный подход к сервису. Мы бережно собираем лучшие локальные продукты и превращаем их в изысканные блюда.</p>
+                <p>Шеф-повар Маттео Рицци и его команда работают только с премиальными ингредиентами: от фермерских сыров до свежих дагестанских ягнят и рыбы из Каспия. Винная карта включает более 300 позиций от лучших сомелье России и Европы.</p>
+                <p>Мы дарим не просто ужин — мы дарим впечатление, сотканное из света, музыки и безупречного сервиса. Добро пожаловать в Filial, где каждый гость чувствует себя особенным.</p>
+            </div>
+            <div class="about-img">
+                <img src="https://images.unsplash.com/photo-1414235077428-38a3d8a5b9e6?w=800&auto=format" alt="Интерьер ресторана" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="section container" style="margin-top: 5rem;">
+        <h2 class="section-title"><span>Эксклюзивное меню</span></h2>
+        <div class="menu-filters" id="filterContainer">
+            <button class="filter-btn active" data-category="all">Все блюда</button>
+            <button class="filter-btn" data-category="appetizers">Закуски</button>
+            <button class="filter-btn" data-category="main">Основные блюда</button>
+            <button class="filter-btn" data-category="desserts">Десерты</button>
+            <button class="filter-btn" data-category="drinks">Напитки</button>
+        </div>
+        <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+    <section id="reservation" class="section container" style="margin-top: 5rem;">
+        <h2 class="section-title"><span>Забронировать стол</span></h2>
+        <div class="contact-row">
+            <div class="reservation-form">
+                <form id="reserveForm">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <input type="text" placeholder="Ваше имя" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <input type="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <input type="tel" placeholder="Телефон" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <input type="time" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <textarea rows="2" placeholder="Особые пожелания"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Забронировать сейчас</button>
+                </form>
+            </div>
+            <div id="contact" class="contact-info">
+                <div class="info-item"><i class="fas fa-map-marker-alt"></i><span>пр. Расула Гамзатова, 47, Махачкала</span></div>
+                <div class="info-item"><i class="fas fa-phone-alt"></i><span>+7 (8722) 99-88-77</span></div>
+                <div class="info-item"><i class="fas fa-envelope"></i><span>info@filial-makhachkala.ru</span></div>
+                <div class="info-item"><i class="fas fa-clock"></i><span>Ежедневно 12:00 – 00:00</span></div>
+                <div style="margin-top: 2rem;"><i class="fab fa-instagram" style="margin-right: 15px; font-size: 1.8rem;"></i><i class="fab fa-telegram" style="margin-right: 15px; font-size: 1.8rem;"></i><i class="fab fa-facebook-f" style="font-size: 1.8rem;"></i></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>© 2025 FILIAL | Ресторан в Махачкале. Все права защищены.</p>
+</footer>
+<div class="scroll-top" id="scrollTopBtn"><i class="fas fa-chevron-up"></i></div>
+
+<script>
+    // Меню (полностью то же, что и ранее, с ценами в рублях)
+    const menuData = [
+        { name: "Устрицы 'Белый Жемчуг'", price: "3 200 ₽", desc: "Свежайшие устрицы с лимонным желе и жемчужной икрой", category: "appetizers", img: "https://images.unsplash.com/photo-1580480055278-2281b2f8a2e8?w=500&auto=format" },
+        { name: "Тартар из говядины", price: "2 800 ₽", desc: "Мраморная говядина, трюфельный соус, перепелиный желток", category: "appetizers", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&auto=format" },
+        { name: "Черный трюфель ризотто", price: "3 900 ₽", desc: "Арборио, пармезан 36 мес., микрозелень", category: "main", img: "https://images.unsplash.com/photo-1633964911350-bec7b5b4fd1a?w=500&auto=format" },
+        { name: "Мраморный стейк Вагю", price: "7 900 ₽", desc: "Австралийский вагю, соус демиглас, картофель фонте", category: "main", img: "https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=500&auto=format" },
+        { name: "Лосось с маракуйей", price: "4 100 ₽", desc: "Норвежский лосось, соус из маракуйи, батат", category: "main", img: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format" },
+        { name: "Десерт 'Золотая сфера'", price: "1 800 ₽", desc: "Шоколадный мусс, карамелизированный фундук, съедобное золото", category: "desserts", img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&auto=format" },
+        { name: "Тирамису классико", price: "1 500 ₽", desc: "Маскарпоне, печенье савоярди, эспрессо", category: "desserts", img: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&auto=format" },
+        { name: "Коктейль 'Filial Signature'", price: "1 600 ₽", desc: "Шампанское, ликер маракуйя, розмарин", category: "drinks", img: "https://images.unsplash.com/photo-1551538827-9c037cb4f32b?w=500&auto=format" },
+        { name: "Old Fashioned премиум", price: "1 700 ₽", desc: "Бурбон, ангостура, тростниковый сахар", category: "drinks", img: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=500&auto=format" },
+        { name: "Карабинерос на гриле", price: "5 400 ₽", desc: "Королевские креветки, айоли с шафраном", category: "main", img: "https://images.unsplash.com/photo-1565680018433-b513d5e5fd47?w=500&auto=format" },
+        { name: "Фуа-гра террин", price: "3 600 ₽", desc: "Инжирный чатни, бриошь", category: "appetizers", img: "https://images.unsplash.com/photo-1541529086526-db283c563270?w=500&auto=format" },
+        { name: "Манго павлова", price: "1 450 ₽", desc: "Безе, сливочный крем, свежее манго", category: "desserts", img: "https://images.unsplash.com/photo-1559629814-74d6b6604b9b?w=500&auto=format" }
+    ];
+
+    let currentFilter = "all";
+
+    function renderMenu() {
+        const filtered = currentFilter === "all" ? menuData : menuData.filter(item => item.category === currentFilter);
+        const grid = document.getElementById("menuGrid");
+        if (!grid) return;
+        grid.innerHTML = filtered.map(item => `
+            <div class="menu-card">
+                <div class="card-img"><img src="${item.img}" alt="${item.name}" loading="lazy"></div>
+                <div class="card-info">
+                    <div class="card-header">
+                        <div class="dish-name">${item.name}</div>
+                        <div class="price">${item.price}</div>
+                    </div>
+                    <div class="desc">${item.desc}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.getAttribute('data-category');
+            renderMenu();
+        });
+    });
+
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    if(menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+        });
+    });
+
+    const sections = document.querySelectorAll('.section, #home, #about, #menu, #reservation');
+    const navItems = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        const scrollPos = window.scrollY + 150;
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            if(scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                current = section.getAttribute('id');
+            }
+        });
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            const href = item.getAttribute('href').substring(1);
+            if(href === current) item.classList.add('active');
+        });
+        const scrollBtn = document.getElementById('scrollTopBtn');
+        if(window.scrollY > 600) scrollBtn.classList.add('visible');
+        else scrollBtn.classList.remove('visible');
+    });
+
+    document.getElementById('scrollTopBtn').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const target = document.getElementById(targetId);
+            if(target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    document.getElementById('exploreMenuBtn')?.addEventListener('click', () => document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' }));
+    document.getElementById('bookTableHero')?.addEventListener('click', () => document.getElementById('reservation')?.scrollIntoView({ behavior: 'smooth' }));
+    document.getElementById('desktopReserveBtn')?.addEventListener('click', () => document.getElementById('reservation')?.scrollIntoView({ behavior: 'smooth' }));
+    document.getElementById('mobileReserveBtn')?.addEventListener('click', () => {
+        document.getElementById('reservation')?.scrollIntoView({ behavior: 'smooth' });
+        navLinks.classList.remove('active');
+    });
+
+    // Обработка формы бронирования
+    const reserveForm = document.getElementById('reserveForm');
+    if(reserveForm) {
+        reserveForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Собираем данные формы (можно отправить на сервер, сейчас просто вывод)
+            const formData = new FormData(reserveForm);
+            const data = Object.fromEntries(formData.entries());
+            console.log('Данные бронирования:', data);
+            // В текущей версии данные никуда не отправляются, только показывается уведомление.
+            // Чтобы настроить реальную отправку, можно использовать fetch или сервис типа Formspree.
+            alert('✨ Спасибо! Ваша заявка принята. Наш менеджер свяжется с вами для подтверждения брони.');
+            reserveForm.reset();
+        });
+    }
+
+    const revealSections = document.querySelectorAll('.section');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    revealSections.forEach(section => observer.observe(section));
+
+    const glow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+    });
+
+    renderMenu();
+    document.querySelectorAll('.section').forEach(sec => {
+        if(sec.getBoundingClientRect().top < window.innerHeight-100) sec.classList.add('revealed');
+    });
+    window.dispatchEvent(new Event('scroll'));
+</script>
+</body>
+</html>
